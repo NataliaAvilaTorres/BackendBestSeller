@@ -1,5 +1,6 @@
 package com.example.demo.controlador;
 
+import com.example.demo.controlador.UsuarioController.Respuesta;
 import com.example.modelo.Usuario;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +26,20 @@ public class UsuarioController {
 
         public void setMensaje(String mensaje) {
             this.mensaje = mensaje;
+        }
+    }
+
+    @PostMapping("/registrar")
+    public Respuesta registrarUsuario(@RequestBody Usuario usuario) {
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("usuarios");
+            String idUsuario = ref.push().getKey();
+            ref.child(idUsuario).setValueAsync(usuario);
+            return new Respuesta("Usuario registrado correctamente");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Respuesta("Error al registrar usuario: " + e.getMessage());
         }
     }
 
