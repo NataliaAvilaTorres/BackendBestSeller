@@ -13,6 +13,25 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/ofertas")
 public class OfertaController {
 
+    @PostMapping("/crear")
+    public Respuesta crearOferta(@RequestBody Oferta oferta) {
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("ofertas");
+
+            // generar un ID único en Firebase
+            String id = ref.push().getKey();
+
+            // guardar la oferta bajo ese ID
+            ref.child(id).setValueAsync(oferta);
+
+            return new Respuesta("Oferta creada correctamente");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Respuesta("Error al crear oferta: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/listar")
     public CompletableFuture<Iterable<Oferta>> listarOfertas() {
         CompletableFuture<Iterable<Oferta>> future = new CompletableFuture<>();
@@ -37,5 +56,17 @@ public class OfertaController {
         });
 
         return future;
+    }
+
+    // ---------- Clase de respuesta ----------
+    public static class Respuesta {
+        private String mensaje;
+
+        public Respuesta(String mensaje) {
+            this.mensaje = mensaje;
+        }
+
+        public String getMensaje() { return mensaje; }
+        public void setMensaje(String mensaje) { this.mensaje = mensaje; }
     }
 }
