@@ -14,23 +14,30 @@ import java.util.concurrent.CompletableFuture;
 public class OfertaController {
 
     @PostMapping("/crear")
-    public Respuesta crearOferta(@RequestBody Oferta oferta) {
-        try {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference ref = database.getReference("ofertas");
+public CompletableFuture<Respuesta> crearOferta(@RequestBody Oferta oferta) {
+    CompletableFuture<Respuesta> future = new CompletableFuture<>();
 
-            // generar un ID único en Firebase
-            String id = ref.push().getKey();
+    try {
+        // Guardar el producto
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference productRef = database.getReference("productos");
+        String productId = productRef.push().getKey();
+        productRef.child(productId).setValueAsync(oferta.getProducto());
 
-            // guardar la oferta bajo ese ID
-            ref.child(id).setValueAsync(oferta);
+        // Guardar la oferta
+        DatabaseReference ofertaRef = database.getReference("ofertas");
+        String ofertaId = ofertaRef.push().getKey();
+        ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-            return new Respuesta("Oferta creada correctamente");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Respuesta("Error al crear oferta: " + e.getMessage());
-        }
+        future.complete(new Respuesta("Oferta y Producto guardados correctamente"));
+    } catch (Exception e) {
+        e.printStackTrace();
+        future.complete(new Respuesta("Error al guardar oferta y producto: " + e.getMessage()));
     }
+
+    return future;
+}
+
 
     @GetMapping("/listar")
     public CompletableFuture<Iterable<Oferta>> listarOfertas() {
