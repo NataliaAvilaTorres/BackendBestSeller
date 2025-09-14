@@ -1,6 +1,5 @@
 package com.example.modelo;
 
-import java.util.Date;
 
 public class Oferta {
     private String nombreOferta;

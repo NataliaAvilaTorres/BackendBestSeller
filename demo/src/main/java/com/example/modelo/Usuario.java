@@ -1,6 +1,7 @@
 package com.example.modelo;
 
 public class Usuario {
+    private String id;
     private String nombre;
     private String correo;
     private String ciudad;
@@ -8,14 +9,19 @@ public class Usuario {
 
     public Usuario() {} 
 
-    public Usuario(String nombre, String correo, String ciudad, String contrasena) {
+    public Usuario(String nombre, String correo, String ciudad, String contrasena, String id) {
         this.nombre = nombre;
         this.correo = correo;
         this.ciudad = ciudad;
         this.contrasena = contrasena;
+        this.id = id;
     }
 
     // Getters y Setters
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 

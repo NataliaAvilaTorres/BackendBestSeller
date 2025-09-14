@@ -1,7 +1,7 @@
 package com.example.demo.controlador;
 
-import com.example.demo.controlador.UsuarioController.Respuesta;
 import com.example.modelo.Usuario;
+import com.google.api.core.ApiFuture;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -14,10 +14,21 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     public static class Respuesta {
-        private String mensaje;
 
-        public Respuesta(String mensaje) {
+        private String mensaje;
+        private Usuario usuario;
+
+        public Respuesta(String mensaje, Usuario usuario) {
             this.mensaje = mensaje;
+            this.usuario = usuario;
+        }
+
+        public Usuario getUsuario() {
+            return usuario;
+        }
+
+        public void setUsuario(Usuario usuario) {
+            this.usuario = usuario;
         }
 
         public String getMensaje() {
@@ -34,12 +45,19 @@ public class UsuarioController {
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference ref = database.getReference("usuarios");
+
             String idUsuario = ref.push().getKey();
-            ref.child(idUsuario).setValueAsync(usuario);
-            return new Respuesta("Usuario registrado correctamente");
+            usuario.setId(idUsuario);
+
+            ApiFuture<Void> future = ref.child(idUsuario).setValueAsync(usuario);
+
+            future.get();
+
+            return new Respuesta("Usuario registrado correctamente", usuario);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new Respuesta("Error al registrar usuario: " + e.getMessage());
+            return new Respuesta("Usuario registrado correctamente", usuario);
         }
     }
 
@@ -59,28 +77,45 @@ public class UsuarioController {
                                 for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
                                     Usuario u = child.getValue(Usuario.class);
                                     if (u != null && u.getContrasena().equals(usuario.getContrasena())) {
-                                        future.complete(new Respuesta("Login exitoso"));
+                                        // ✅ Devolver usuario junto al mensaje
+                                        future.complete(new Respuesta("Login exitoso", u));
                                         return;
                                     }
                                 }
-                                future.complete(new Respuesta("Credenciales incorrectas"));
+                                future.complete(new Respuesta("Credenciales incorrectas", null));
                             } else {
-                                future.complete(new Respuesta("Credenciales incorrectas"));
+                                future.complete(new Respuesta("Credenciales incorrectas", null));
                             }
                         }
 
                         @Override
                         public void onCancelled(com.google.firebase.database.DatabaseError error) {
-                            future.complete(new Respuesta("Error Firebase: " + error.getMessage()));
+                            future.complete(new Respuesta("Error Firebase: " + error.getMessage(), null));
                         }
                     });
 
         } catch (Exception e) {
             e.printStackTrace();
-            future.complete(new Respuesta("Error en login: " + e.getMessage()));
+            future.complete(new Respuesta("Error en login: " + e.getMessage(), null));
         }
 
         return future;
+    }
+
+    @PutMapping("/actualizar/{id}")
+    public Respuesta actualizarUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("usuarios").child(id);
+
+            ApiFuture<Void> future = ref.setValueAsync(usuario);
+            future.get();
+
+            return new Respuesta("Usuario actualizado correctamente", usuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Respuesta("Error al actualizar usuario: " + e.getMessage(), null);
+        }
     }
 
 }
