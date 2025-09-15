@@ -118,4 +118,19 @@ public class UsuarioController {
         }
     }
 
+    @DeleteMapping("/eliminar/{id}")
+    public Respuesta eliminarUsuario(@PathVariable String id) {
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("usuarios").child(id);
+
+            ApiFuture<Void> future = ref.removeValueAsync();
+            future.get();
+
+            return new Respuesta("Usuario eliminado correctamente", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Respuesta("Error al eliminar usuario: " + e.getMessage(), null);
+        }
+    }
 }
