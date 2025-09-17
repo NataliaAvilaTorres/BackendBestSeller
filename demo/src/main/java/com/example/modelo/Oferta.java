@@ -8,20 +8,20 @@ public class Oferta {
     private Long fechaOferta;
     private Producto producto;
     private String urlImagen;
+    private int likes;            
+    private boolean likedByUser;   // si el usuario actual ya dio like
 
     public Oferta() {}
 
-    public Oferta(String nombreOferta, String descripcionOferta, String tiendaNombre, Long fechaOferta, Producto producto, String urlImagen) {
+    public Oferta(String nombreOferta, String descripcionOferta, String tiendaNombre, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser) {
         this.nombreOferta = nombreOferta;
         this.descripcionOferta = descripcionOferta;
         this.tiendaNombre = tiendaNombre;
         this.fechaOferta = fechaOferta;
         this.producto = producto;
         this.urlImagen = urlImagen;
-    }
-
-    public String getTiendaNombre() {
-        return tiendaNombre;
+        this.likes = likes;
+        this.likedByUser = likedByUser;
     }
 
     public void setTiendaNombre(String tiendaNombre) {
@@ -67,5 +67,11 @@ public class Oferta {
     public void setUrlImagen(String urlImagen) {
         this.urlImagen = urlImagen;
     }
+
+    public int getLikes() { return likes; }
+    public void setLikes(int likes) { this.likes = likes; }
+
+    public boolean isLikedByUser() { return likedByUser; }
+    public void setLikedByUser(boolean likedByUser) { this.likedByUser = likedByUser; }
 
 }

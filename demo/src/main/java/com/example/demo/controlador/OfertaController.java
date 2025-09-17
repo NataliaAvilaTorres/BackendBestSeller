@@ -14,29 +14,67 @@ import java.util.concurrent.CompletableFuture;
 public class OfertaController {
 
     @PostMapping("/crear")
-public CompletableFuture<Respuesta> crearOferta(@RequestBody Oferta oferta) {
-    CompletableFuture<Respuesta> future = new CompletableFuture<>();
+    public CompletableFuture<Respuesta> crearOferta(@RequestBody Oferta oferta) {
+        CompletableFuture<Respuesta> future = new CompletableFuture<>();
 
-    try {
-        // Guardar el producto
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference productRef = database.getReference("productos");
-        String productId = productRef.push().getKey();
-        productRef.child(productId).setValueAsync(oferta.getProducto());
+        try {
+            // Guardar el producto
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference productRef = database.getReference("productos");
+            String productId = productRef.push().getKey();
+            productRef.child(productId).setValueAsync(oferta.getProducto());
 
-        // Guardar la oferta
-        DatabaseReference ofertaRef = database.getReference("ofertas");
-        String ofertaId = ofertaRef.push().getKey();
-        ofertaRef.child(ofertaId).setValueAsync(oferta);
+            // Guardar la oferta
+            DatabaseReference ofertaRef = database.getReference("ofertas");
+            String ofertaId = ofertaRef.push().getKey();
+            ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-        future.complete(new Respuesta("Oferta y Producto guardados correctamente"));
-    } catch (Exception e) {
-        e.printStackTrace();
-        future.complete(new Respuesta("Error al guardar oferta y producto: " + e.getMessage()));
+            future.complete(new Respuesta("Oferta y Producto guardados correctamente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            future.complete(new Respuesta("Error al guardar oferta y producto: " + e.getMessage()));
+        }
+
+        return future;
     }
+
+    @PostMapping("/{id}/like")
+public CompletableFuture<Respuesta> toggleLike(@PathVariable String id, @RequestParam boolean liked) {
+    CompletableFuture<Respuesta> future = new CompletableFuture<>();
+    DatabaseReference ofertaRef = FirebaseDatabase.getInstance()
+            .getReference("ofertas")
+            .child(id);
+
+    // Leer los datos usando addListenerForSingleValueEvent
+    ofertaRef.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+        @Override
+        public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+            Oferta oferta = snapshot.getValue(Oferta.class);
+            if (oferta != null) {
+                int nuevoLikes = oferta.getLikes();
+                if (liked) nuevoLikes += 1;
+                else nuevoLikes -= 1;
+
+                oferta.setLikes(nuevoLikes);
+                oferta.setLikedByUser(liked);
+
+                ofertaRef.setValueAsync(oferta);
+                future.complete(new Respuesta("Like actualizado correctamente"));
+            } else {
+                future.complete(new Respuesta("Oferta no encontrada"));
+            }
+        }
+
+        @Override
+        public void onCancelled(com.google.firebase.database.DatabaseError error) {
+            future.completeExceptionally(new RuntimeException(error.getMessage()));
+        }
+    });
 
     return future;
 }
+
+
 
 
     @GetMapping("/listar")
