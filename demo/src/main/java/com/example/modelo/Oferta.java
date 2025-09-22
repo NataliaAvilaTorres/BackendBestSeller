@@ -68,6 +68,12 @@ public class Oferta {
         this.urlImagen = urlImagen;
     }
 
+    public String getTiendaNombre() {
+    return tiendaNombre;
+}
+
+
+
     public int getLikes() { return likes; }
     public void setLikes(int likes) { this.likes = likes; }
 
