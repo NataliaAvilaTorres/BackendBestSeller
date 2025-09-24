@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,45 +23,46 @@ import com.google.firebase.database.FirebaseDatabase;
 @RequestMapping("/api/ofertas")
 public class OfertaController {
 
-    @PostMapping("/crear")
-    public CompletableFuture<Respuesta> crearOferta(@RequestBody Oferta oferta) {
+    @PostMapping("/crear/{usuarioId}")
+    public CompletableFuture<Respuesta> crearOferta(@PathVariable String usuarioId, @RequestBody Oferta oferta) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
-
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-            // Guardar el producto
+            // Guardar producto con relación al usuario
             DatabaseReference productRef = database.getReference("productos");
             String productId = productRef.push().getKey();
+            oferta.getProducto().setId(productId);
+            oferta.getProducto().setUsuarioId(usuarioId); //  dueño del producto
             productRef.child(productId).setValueAsync(oferta.getProducto());
 
-            // Guardar la oferta
+            // Guardar oferta con relación al usuario
             DatabaseReference ofertaRef = database.getReference("ofertas");
             String ofertaId = ofertaRef.push().getKey();
+            oferta.setId(ofertaId);
+            oferta.setUsuarioId(usuarioId); //  dueño de la oferta
+            oferta.setProductoId(productId);
             ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-            // 🚀 Guardar la notificación relacionada en "notificaciones"
+            // Guardar notificación
             DatabaseReference notificacionesRef = database.getReference("notificaciones");
             String notificacionId = notificacionesRef.push().getKey();
-
             Notificacion notificacion = new Notificacion(
-                    notificacionId,                      // id de la notificación
-                    oferta.getNombreOferta(),            // usuario o tienda que publica
-                    oferta.getDescripcionOferta(),       // mensaje de la notificación
-                    System.currentTimeMillis(),          // timestamp
-                    ofertaId                             // relación con la oferta
+                    notificacionId,
+                    usuarioId,
+                    oferta.getDescripcionOferta(),
+                    System.currentTimeMillis(),
+                    ofertaId
             );
-
             notificacionesRef.child(notificacionId).setValueAsync(notificacion);
 
-            future.complete(new Respuesta("Oferta, Producto y Notificación guardados correctamente"));
+            future.complete(new Respuesta("Oferta creada correctamente"));
         } catch (Exception e) {
-            e.printStackTrace();
-            future.complete(new Respuesta("Error al guardar oferta, producto y notificación: " + e.getMessage()));
+            future.complete(new Respuesta("Error al crear oferta: " + e.getMessage()));
         }
-
         return future;
     }
+
 
     @PostMapping("/{id}/like")
     public CompletableFuture<Respuesta> toggleLike(@PathVariable String id, @RequestParam boolean liked) {
@@ -122,7 +125,7 @@ public class OfertaController {
         return future;
     }
 
-    // ---------- 🚀 Nuevo endpoint para listar notificaciones ----------
+    
     @GetMapping("/notificaciones/listar")
     public CompletableFuture<List<Notificacion>> listarNotificaciones() {
         CompletableFuture<List<Notificacion>> future = new CompletableFuture<>();
@@ -147,6 +150,63 @@ public class OfertaController {
 
         return future;
     }
+
+    @GetMapping("/listar/{usuarioId}")
+    public CompletableFuture<List<Oferta>> listarOfertasUsuario(@PathVariable String usuarioId) {
+        CompletableFuture<List<Oferta>> future = new CompletableFuture<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas");
+
+        ref.orderByChild("usuarioId").equalTo(usuarioId)
+            .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                    List<Oferta> lista = new ArrayList<>();
+                    for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
+                        Oferta o = child.getValue(Oferta.class);
+                        lista.add(o);
+                    }
+                    future.complete(lista);
+                }
+
+                @Override
+                public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                    future.completeExceptionally(new RuntimeException(error.getMessage()));
+                }
+            });
+
+        return future;
+    }
+
+    @PutMapping("/actualizar/{id}")
+    public CompletableFuture<Respuesta> actualizarOferta(@PathVariable String id, @RequestBody Oferta oferta) {
+        CompletableFuture<Respuesta> future = new CompletableFuture<>();
+        try {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas").child(id);
+            oferta.setId(id); // asegúrate de conservar el id
+            ref.setValueAsync(oferta);
+            future.complete(new Respuesta("Oferta actualizada correctamente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            future.complete(new Respuesta("Error al actualizar: " + e.getMessage()));
+        }
+        return future;
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public CompletableFuture<Respuesta> eliminarOferta(@PathVariable String id) {
+        CompletableFuture<Respuesta> future = new CompletableFuture<>();
+        try {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas").child(id);
+            ref.removeValueAsync();
+            future.complete(new Respuesta("Oferta eliminada correctamente"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            future.complete(new Respuesta("Error al eliminar: " + e.getMessage()));
+        }
+        return future;
+    }
+
+
 
     // ---------- Clase de respuesta ----------
     public static class Respuesta {

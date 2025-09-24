@@ -1,7 +1,9 @@
 package com.example.modelo;
 
+import org.checkerframework.checker.units.qual.t;
 
 public class Oferta {
+    private String id;
     private String nombreOferta;
     private String descripcionOferta;
     private String tiendaNombre;
@@ -11,9 +13,13 @@ public class Oferta {
     private int likes;            
     private boolean likedByUser;   // si el usuario actual ya dio like
 
+    private String usuarioId;      // referencia al usuario creador
+    private String productoId;
+
     public Oferta() {}
 
-    public Oferta(String nombreOferta, String descripcionOferta, String tiendaNombre, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser) {
+    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaNombre, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser, String usuarioId, String productoId) {
+        this.id = id;
         this.nombreOferta = nombreOferta;
         this.descripcionOferta = descripcionOferta;
         this.tiendaNombre = tiendaNombre;
@@ -22,7 +28,12 @@ public class Oferta {
         this.urlImagen = urlImagen;
         this.likes = likes;
         this.likedByUser = likedByUser;
+        this.usuarioId = usuarioId;
+        this.productoId = productoId;
     }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public void setTiendaNombre(String tiendaNombre) {
         this.tiendaNombre = tiendaNombre;
@@ -79,5 +90,11 @@ public class Oferta {
 
     public boolean isLikedByUser() { return likedByUser; }
     public void setLikedByUser(boolean likedByUser) { this.likedByUser = likedByUser; }
+
+    public String getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
+
+    public String getProductoId() { return productoId; }
+    public void setProductoId(String productoId) { this.productoId = productoId; }
 
 }
