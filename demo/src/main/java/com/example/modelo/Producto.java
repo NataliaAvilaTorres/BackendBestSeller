@@ -1,7 +1,5 @@
 package com.example.modelo;
 
-import org.checkerframework.checker.units.qual.t;
-
 public class Producto {
     private String id;
     private String nombre;
