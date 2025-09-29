@@ -64,8 +64,12 @@ public class OfertaController {
     }
 
 
-    @PostMapping("/{id}/like")
-    public CompletableFuture<Respuesta> toggleLike(@PathVariable String id, @RequestParam boolean liked) {
+    @PostMapping("/{id}/like/{usuarioId}")
+    public CompletableFuture<Respuesta> toggleLike(
+            @PathVariable String id,
+            @PathVariable String usuarioId,
+            @RequestParam boolean liked) {
+
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
         DatabaseReference ofertaRef = FirebaseDatabase.getInstance()
                 .getReference("ofertas")
@@ -76,15 +80,33 @@ public class OfertaController {
             public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
                 Oferta oferta = snapshot.getValue(Oferta.class);
                 if (oferta != null) {
-                    int nuevoLikes = oferta.getLikes();
-                    if (liked) nuevoLikes += 1;
-                    else nuevoLikes -= 1;
+                    DatabaseReference likedByRef = ofertaRef.child("likedBy").child(usuarioId);
 
-                    oferta.setLikes(nuevoLikes);
-                    oferta.setLikedByUser(liked);
+                    if (liked) {
+                        //  Agregar el like de este usuario
+                        likedByRef.setValueAsync(true);
+                    } else {
+                        //  Quitar el like de este usuario
+                        likedByRef.removeValueAsync();
+                    }
 
-                    ofertaRef.setValueAsync(oferta);
-                    future.complete(new Respuesta("Like actualizado correctamente"));
+                    //  Recalcular el número total de likes basado en el mapa
+                    DatabaseReference likedByMapRef = ofertaRef.child("likedBy");
+                    likedByMapRef.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                            int nuevoLikes = (int) snapshot.getChildrenCount();
+                            ofertaRef.child("likes").setValueAsync(nuevoLikes);
+
+                            future.complete(new Respuesta("Like actualizado correctamente"));
+                        }
+
+                        @Override
+                        public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                            future.completeExceptionally(new RuntimeException(error.getMessage()));
+                        }
+                    });
+
                 } else {
                     future.complete(new Respuesta("Oferta no encontrada"));
                 }
@@ -98,6 +120,8 @@ public class OfertaController {
 
         return future;
     }
+
+
 
     @GetMapping("/listar")
     public CompletableFuture<Iterable<Oferta>> listarOfertas() {

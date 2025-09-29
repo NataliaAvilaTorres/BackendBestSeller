@@ -1,5 +1,8 @@
 package com.example.modelo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Oferta {
     private String id;
     private String nombreOferta;
@@ -13,6 +16,9 @@ public class Oferta {
 
     private String usuarioId;      // referencia al usuario creador
     private String productoId;
+
+    // 🔹 NUEVO: mapa de usuarios que dieron like
+    private Map<String, Boolean> likedBy = new HashMap<>();
 
     public Oferta() {}
 
@@ -28,6 +34,7 @@ public class Oferta {
         this.likedByUser = likedByUser;
         this.usuarioId = usuarioId;
         this.productoId = productoId;
+        this.likedBy = new HashMap<>();
     }
 
     public String getId() { return id; }
@@ -78,10 +85,8 @@ public class Oferta {
     }
 
     public String getTiendaNombre() {
-    return tiendaNombre;
-}
-
-
+        return tiendaNombre;
+    }
 
     public int getLikes() { return likes; }
     public void setLikes(int likes) { this.likes = likes; }
@@ -95,4 +100,7 @@ public class Oferta {
     public String getProductoId() { return productoId; }
     public void setProductoId(String productoId) { this.productoId = productoId; }
 
+    // 🔹 Getters y setters para el mapa de likes
+    public Map<String, Boolean> getLikedBy() { return likedBy; }
+    public void setLikedBy(Map<String, Boolean> likedBy) { this.likedBy = likedBy; }
 }
