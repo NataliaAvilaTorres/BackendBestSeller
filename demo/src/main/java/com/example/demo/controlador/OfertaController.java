@@ -29,22 +29,26 @@ public class OfertaController {
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-            // Guardar producto con relación al usuario
+            // Guardar producto
             DatabaseReference productRef = database.getReference("productos");
             String productId = productRef.push().getKey();
             oferta.getProducto().setId(productId);
-            oferta.getProducto().setUsuarioId(usuarioId); //  dueño del producto
+            oferta.getProducto().setUsuarioId(usuarioId);
             productRef.child(productId).setValueAsync(oferta.getProducto());
 
-            // Guardar oferta con relación al usuario
+            // Guardar oferta
             DatabaseReference ofertaRef = database.getReference("ofertas");
             String ofertaId = ofertaRef.push().getKey();
             oferta.setId(ofertaId);
-            oferta.setUsuarioId(usuarioId); //  dueño de la oferta
+            oferta.setUsuarioId(usuarioId);
             oferta.setProductoId(productId);
+
+            // ⚡ Aquí se guardan tienda y ubicación
+            // oferta.getTiendaId() y oferta.getUbicacion() ya vienen desde el front
+
             ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-            // Guardar notificación
+            // Notificación
             DatabaseReference notificacionesRef = database.getReference("notificaciones");
             String notificacionId = notificacionesRef.push().getKey();
             Notificacion notificacion = new Notificacion(

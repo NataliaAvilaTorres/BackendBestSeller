@@ -7,7 +7,7 @@ public class Oferta {
     private String id;
     private String nombreOferta;
     private String descripcionOferta;
-    private String tiendaNombre;
+    private String tiendaId;
     private Long fechaOferta;
     private Producto producto;
     private String urlImagen;
@@ -16,17 +16,18 @@ public class Oferta {
 
     private String usuarioId;      // referencia al usuario creador
     private String productoId;
+    private Ubicacion ubicacion;
 
     // 🔹 NUEVO: mapa de usuarios que dieron like
     private Map<String, Boolean> likedBy = new HashMap<>();
 
     public Oferta() {}
 
-    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaNombre, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser, String usuarioId, String productoId) {
+    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaId, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser, String usuarioId, String productoId , Ubicacion ubicacion) {
         this.id = id;
         this.nombreOferta = nombreOferta;
         this.descripcionOferta = descripcionOferta;
-        this.tiendaNombre = tiendaNombre;
+        this.tiendaId = tiendaId;
         this.fechaOferta = fechaOferta;
         this.producto = producto;
         this.urlImagen = urlImagen;
@@ -35,13 +36,14 @@ public class Oferta {
         this.usuarioId = usuarioId;
         this.productoId = productoId;
         this.likedBy = new HashMap<>();
+        this.ubicacion = ubicacion;
     }
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public void setTiendaNombre(String tiendaNombre) {
-        this.tiendaNombre = tiendaNombre;
+    public void setTiendaId(String tiendaId) {
+        this.tiendaId = tiendaId;
     }
     
     public String getNombreOferta() {
@@ -84,8 +86,8 @@ public class Oferta {
         this.urlImagen = urlImagen;
     }
 
-    public String getTiendaNombre() {
-        return tiendaNombre;
+    public String getTiendaId() {
+        return tiendaId;
     }
 
     public int getLikes() { return likes; }
@@ -103,4 +105,7 @@ public class Oferta {
     // 🔹 Getters y setters para el mapa de likes
     public Map<String, Boolean> getLikedBy() { return likedBy; }
     public void setLikedBy(Map<String, Boolean> likedBy) { this.likedBy = likedBy; }
+
+    public Ubicacion getUbicacion() { return ubicacion; }
+    public void setUbicacion(Ubicacion ubicacion) { this.ubicacion = ubicacion; }
 }
