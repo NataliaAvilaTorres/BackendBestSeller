@@ -5,7 +5,7 @@ import org.checkerframework.checker.units.qual.s;
 public class Ubicacion {
     private double lat;
     private double lng;
-    private String direccion; // opcional, para mostrar bonito
+    private String direccion; 
 
     public Ubicacion() {}
 

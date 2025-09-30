@@ -33,7 +33,6 @@ public class Notificacion {
     public String getIdOferta() { return idOferta; }
     public void setIdOferta(String idOferta) { this.idOferta = idOferta; }
 
-    // 🚀 Método auxiliar para compatibilidad con "tiempo"
     public void setTiempo(Long tiempo) {
         this.timestamp = tiempo;
     }

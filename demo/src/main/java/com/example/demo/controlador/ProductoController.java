@@ -22,7 +22,7 @@ public class ProductoController {
 
             String id = ref.push().getKey();
             producto.setId(id);
-            producto.setUsuarioId(usuarioId); // asignar usuario dueño
+            producto.setUsuarioId(usuarioId); 
 
             ref.child(id).setValueAsync(producto);
             future.complete("Producto creado correctamente");

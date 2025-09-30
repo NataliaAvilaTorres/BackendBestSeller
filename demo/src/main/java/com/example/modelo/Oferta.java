@@ -12,13 +12,13 @@ public class Oferta {
     private Producto producto;
     private String urlImagen;
     private int likes;            
-    private boolean likedByUser;   // si el usuario actual ya dio like
+    private boolean likedByUser;   
 
-    private String usuarioId;      // referencia al usuario creador
+    private String usuarioId;      
     private String productoId;
     private Ubicacion ubicacion;
 
-    // 🔹 NUEVO: mapa de usuarios que dieron like
+    // Se crea el mapa de los usuarios que le han dado like
     private Map<String, Boolean> likedBy = new HashMap<>();
 
     public Oferta() {}
@@ -102,7 +102,6 @@ public class Oferta {
     public String getProductoId() { return productoId; }
     public void setProductoId(String productoId) { this.productoId = productoId; }
 
-    // 🔹 Getters y setters para el mapa de likes
     public Map<String, Boolean> getLikedBy() { return likedBy; }
     public void setLikedBy(Map<String, Boolean> likedBy) { this.likedBy = likedBy; }
 

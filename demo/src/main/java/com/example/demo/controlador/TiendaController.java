@@ -109,7 +109,6 @@ public class TiendaController {
         return future;
     }
 
-    // Clase de respuesta genérica
     public static class Respuesta {
         private String mensaje;
 

@@ -5,7 +5,7 @@ import java.util.List;
 public class Tienda {
     private String id;
     private String nombre;
-    private String urlImagen; // foto en Firebase Storage
+    private String urlImagen; 
     private Ubicacion ubicacion; 
 
     public Tienda() {}

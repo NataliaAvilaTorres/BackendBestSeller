@@ -43,7 +43,7 @@ public class OfertaController {
             oferta.setUsuarioId(usuarioId);
             oferta.setProductoId(productId);
 
-            // ⚡ Aquí se guardan tienda y ubicación
+            // Aquí se guardan tienda y ubicación
             // oferta.getTiendaId() y oferta.getUbicacion() ya vienen desde el front
 
             ofertaRef.child(ofertaId).setValueAsync(oferta);
@@ -210,7 +210,7 @@ public class OfertaController {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
         try {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas").child(id);
-            oferta.setId(id); // asegúrate de conservar el id
+            oferta.setId(id); 
             ref.setValueAsync(oferta);
             future.complete(new Respuesta("Oferta actualizada correctamente"));
         } catch (Exception e) {

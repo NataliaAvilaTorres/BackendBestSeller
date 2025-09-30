@@ -77,7 +77,7 @@ public class UsuarioController {
                                 for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
                                     Usuario u = child.getValue(Usuario.class);
                                     if (u != null && u.getContrasena().equals(usuario.getContrasena())) {
-                                        // ✅ Devolver usuario junto al mensaje
+                                        // Ahi se devuelve el usuario con el mensaje
                                         future.complete(new Respuesta("Login exitoso", u));
                                         return;
                                     }
