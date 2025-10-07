@@ -29,26 +29,23 @@ public class OfertaController {
         try {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-            // Guardar producto
-            DatabaseReference productRef = database.getReference("productos");
-            String productId = productRef.push().getKey();
-            oferta.getProducto().setId(productId);
-            oferta.getProducto().setUsuarioId(usuarioId);
-            productRef.child(productId).setValueAsync(oferta.getProducto());
+            // Validar que venga el productoId
+            if (oferta.getProductoId() == null || oferta.getProductoId().isEmpty()) {
+                future.complete(new Respuesta("Error: productoId es requerido"));
+                return future;
+            }
 
-            // Guardar oferta
+            // Guardar oferta en Firebase
             DatabaseReference ofertaRef = database.getReference("ofertas");
             String ofertaId = ofertaRef.push().getKey();
             oferta.setId(ofertaId);
             oferta.setUsuarioId(usuarioId);
-            oferta.setProductoId(productId);
 
-            // Aquí se guardan tienda y ubicación
-            // oferta.getTiendaId() y oferta.getUbicacion() ya vienen desde el front
-
+            // Mantener solo productoId en la oferta
+            // No se guarda el objeto Producto completo
             ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-            // Notificación
+            // Crear notificación
             DatabaseReference notificacionesRef = database.getReference("notificaciones");
             String notificacionId = notificacionesRef.push().getKey();
             Notificacion notificacion = new Notificacion(
@@ -56,17 +53,16 @@ public class OfertaController {
                     usuarioId,
                     oferta.getDescripcionOferta(),
                     System.currentTimeMillis(),
-                    ofertaId
-            );
+                    ofertaId);
             notificacionesRef.child(notificacionId).setValueAsync(notificacion);
 
             future.complete(new Respuesta("Oferta creada correctamente"));
         } catch (Exception e) {
+            e.printStackTrace();
             future.complete(new Respuesta("Error al crear oferta: " + e.getMessage()));
         }
         return future;
     }
-
 
     @PostMapping("/{id}/like/{usuarioId}")
     public CompletableFuture<Respuesta> toggleLike(
@@ -87,14 +83,14 @@ public class OfertaController {
                     DatabaseReference likedByRef = ofertaRef.child("likedBy").child(usuarioId);
 
                     if (liked) {
-                        //  Agregar el like de este usuario
+                        // Agregar el like de este usuario
                         likedByRef.setValueAsync(true);
                     } else {
-                        //  Quitar el like de este usuario
+                        // Quitar el like de este usuario
                         likedByRef.removeValueAsync();
                     }
 
-                    //  Recalcular el número total de likes basado en el mapa
+                    // Recalcular el número total de likes basado en el mapa
                     DatabaseReference likedByMapRef = ofertaRef.child("likedBy");
                     likedByMapRef.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                         @Override
@@ -125,8 +121,6 @@ public class OfertaController {
         return future;
     }
 
-
-
     @GetMapping("/listar")
     public CompletableFuture<Iterable<Oferta>> listarOfertas() {
         CompletableFuture<Iterable<Oferta>> future = new CompletableFuture<>();
@@ -153,7 +147,6 @@ public class OfertaController {
         return future;
     }
 
-    
     @GetMapping("/notificaciones/listar")
     public CompletableFuture<List<Notificacion>> listarNotificaciones() {
         CompletableFuture<List<Notificacion>> future = new CompletableFuture<>();
@@ -185,22 +178,22 @@ public class OfertaController {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas");
 
         ref.orderByChild("usuarioId").equalTo(usuarioId)
-            .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-                @Override
-                public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
-                    List<Oferta> lista = new ArrayList<>();
-                    for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
-                        Oferta o = child.getValue(Oferta.class);
-                        lista.add(o);
+                .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                        List<Oferta> lista = new ArrayList<>();
+                        for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
+                            Oferta o = child.getValue(Oferta.class);
+                            lista.add(o);
+                        }
+                        future.complete(lista);
                     }
-                    future.complete(lista);
-                }
 
-                @Override
-                public void onCancelled(com.google.firebase.database.DatabaseError error) {
-                    future.completeExceptionally(new RuntimeException(error.getMessage()));
-                }
-            });
+                    @Override
+                    public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                        future.completeExceptionally(new RuntimeException(error.getMessage()));
+                    }
+                });
 
         return future;
     }
@@ -210,7 +203,7 @@ public class OfertaController {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
         try {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ofertas").child(id);
-            oferta.setId(id); 
+            oferta.setId(id);
             ref.setValueAsync(oferta);
             future.complete(new Respuesta("Oferta actualizada correctamente"));
         } catch (Exception e) {
@@ -234,8 +227,6 @@ public class OfertaController {
         return future;
     }
 
-
-
     // ---------- Clase de respuesta ----------
     public static class Respuesta {
         private String mensaje;
@@ -244,7 +235,12 @@ public class OfertaController {
             this.mensaje = mensaje;
         }
 
-        public String getMensaje() { return mensaje; }
-        public void setMensaje(String mensaje) { this.mensaje = mensaje; }
+        public String getMensaje() {
+            return mensaje;
+        }
+
+        public void setMensaje(String mensaje) {
+            this.mensaje = mensaje;
+        }
     }
 }

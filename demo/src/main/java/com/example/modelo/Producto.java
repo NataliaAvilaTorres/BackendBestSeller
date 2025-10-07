@@ -3,33 +3,33 @@ package com.example.modelo;
 public class Producto {
     private String id;
     private String nombre;
-    private String categoria;
-    private String marca;
+    private Marca marca;
     private double precio;
     private String urlImagen;
 
     private String usuarioId;
+    private String tiendaId;    
 
     public Producto() {}
 
-    public Producto(String id,String nombre, String categoria, String marca, double precio, String urlImagen, String usuarioId) {
+    public Producto(String id,String nombre, Marca marca, double precio, String urlImagen, String usuarioId, String tiendaId) {
         this.id = id;
         this.nombre = nombre;
-        this.categoria = categoria;
         this.marca = marca;
         this.precio = precio;
         this.urlImagen = urlImagen;
         this.usuarioId = usuarioId;
+        this.tiendaId = tiendaId;
     }
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getMarca() {
+    public Marca getMarca() {
         return marca;
     }
 
-    public void setMarca(String marca) {
+    public void setMarca(Marca marca) {
         this.marca = marca;
     }
 
@@ -41,13 +41,6 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
 
     public double getPrecio() {
         return precio;
@@ -68,11 +61,13 @@ public class Producto {
     public String getUsuarioId() { return usuarioId; }
     public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
 
+    public String getTiendaId() { return tiendaId; }
+    public void setTiendaId(String tiendaId) { this.tiendaId = tiendaId; }
     @Override
     public String toString() {
         return "Producto{" +
                 "nombre='" + nombre + '\'' +
-                ", categoria='" + categoria + '\'' +
+                ", marca='" + marca + '\'' +
                 ", precio=" + precio +
                 ", urlImagen='" + urlImagen + '\'' +
                 '}';

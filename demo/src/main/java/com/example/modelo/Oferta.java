@@ -9,11 +9,9 @@ public class Oferta {
     private String descripcionOferta;
     private String tiendaId;
     private Long fechaOferta;
-    private Producto producto;
-    private String urlImagen;
+    private Long fechaFinal;
     private int likes;            
     private boolean likedByUser;   
-
     private String usuarioId;      
     private String productoId;
     private Ubicacion ubicacion;
@@ -23,14 +21,13 @@ public class Oferta {
 
     public Oferta() {}
 
-    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaId, Long fechaOferta, Producto producto, String urlImagen, int likes, boolean likedByUser, String usuarioId, String productoId , Ubicacion ubicacion) {
+    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaId, Long fechaOferta, Long fechaFinal, int likes, boolean likedByUser, String usuarioId, String productoId , Ubicacion ubicacion) {
         this.id = id;
         this.nombreOferta = nombreOferta;
         this.descripcionOferta = descripcionOferta;
         this.tiendaId = tiendaId;
         this.fechaOferta = fechaOferta;
-        this.producto = producto;
-        this.urlImagen = urlImagen;
+        this.fechaFinal = fechaFinal;
         this.likes = likes;
         this.likedByUser = likedByUser;
         this.usuarioId = usuarioId;
@@ -70,21 +67,16 @@ public class Oferta {
         this.fechaOferta = fechaOferta;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public Long getFechaFinal() {
+        return fechaFinal;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public void setFechaFinal(Long fechaFinal) {
+        this.fechaFinal = fechaFinal;
     }
 
-    public String getUrlImagen() {
-        return urlImagen;
-    }
 
-    public void setUrlImagen(String urlImagen) {
-        this.urlImagen = urlImagen;
-    }
+
 
     public String getTiendaId() {
         return tiendaId;

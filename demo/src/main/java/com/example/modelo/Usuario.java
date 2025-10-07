@@ -5,14 +5,16 @@ public class Usuario {
     private String nombre;
     private String correo;
     private String ciudad;
+    private String urlImagen;
     private String contrasena;
 
     public Usuario() {} 
 
-    public Usuario(String nombre, String correo, String ciudad, String contrasena, String id) {
+    public Usuario(String nombre, String correo, String ciudad,  String urlImagen, String contrasena, String id) {
         this.nombre = nombre;
         this.correo = correo;
         this.ciudad = ciudad;
+        this.urlImagen = urlImagen;
         this.contrasena = contrasena;
         this.id = id;
     }
@@ -30,6 +32,9 @@ public class Usuario {
 
     public String getCiudad() { return ciudad; }
     public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+
+    public String getUrlImagen() { return urlImagen; }
+    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
 
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
