@@ -5,22 +5,27 @@ public class Producto {
     private String nombre;
     private Marca marca;
     private double precio;
+    private double precioHasta;
     private String urlImagen;
-
     private String usuarioId;
     private String tiendaId;    
 
     public Producto() {}
 
-    public Producto(String id,String nombre, Marca marca, double precio, String urlImagen, String usuarioId, String tiendaId) {
+    public Producto(String id, String nombre, Marca marca, double precio, double precioHasta,
+                    String urlImagen, String usuarioId, String tiendaId) {
         this.id = id;
         this.nombre = nombre;
         this.marca = marca;
         this.precio = precio;
+        this.precioHasta = precioHasta; // ✅ asignar
         this.urlImagen = urlImagen;
         this.usuarioId = usuarioId;
         this.tiendaId = tiendaId;
     }
+
+    public double getPrecioHasta() { return precioHasta; }
+    public void setPrecioHasta(double precioHasta) { this.precioHasta = precioHasta; }
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
