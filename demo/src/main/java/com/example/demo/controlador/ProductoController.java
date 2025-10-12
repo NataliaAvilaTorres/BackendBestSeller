@@ -16,6 +16,102 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/productos")
 public class ProductoController {
 
+
+    @DeleteMapping("/depurar/huerfanos")
+public CompletableFuture<List<String>> depurarHuerfanos(
+        @RequestParam(defaultValue = "false") boolean dryRun) {
+
+    CompletableFuture<List<String>> future = new CompletableFuture<>();
+    List<String> eliminados = new ArrayList<>();
+
+    try {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("productos");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot tiendaSnap : snapshot.getChildren()) {
+                    for (DataSnapshot prodSnap : tiendaSnap.getChildren()) {
+                        // Criterio de "huérfano": si no tiene 'nombre' o 'marca'
+                        boolean sinNombre = !prodSnap.hasChild("nombre");
+                        boolean sinMarca  = !prodSnap.hasChild("marca");
+
+                        if (sinNombre || sinMarca) {
+                            String path = "productos/" + tiendaSnap.getKey() + "/" + prodSnap.getKey();
+                            eliminados.add(path);
+                            if (!dryRun) {
+                                prodSnap.getRef().removeValueAsync();
+                            }
+                        }
+                    }
+                }
+                if (dryRun) {
+                    System.out.println("DryRun: se eliminarían -> " + eliminados);
+                }
+                future.complete(eliminados);
+            }
+
+            @Override public void onCancelled(DatabaseError error) {
+                future.completeExceptionally(new RuntimeException(error.getMessage()));
+            }
+        });
+    } catch (Exception e) {
+        future.completeExceptionally(e);
+    }
+    return future;
+}
+
+
+    @DeleteMapping("/eliminar/{id}")
+    public CompletableFuture<String> eliminarProducto(@PathVariable String id) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference("productos");
+
+            // ✅ Buscar y eliminar producto sin importar en qué tienda esté
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    boolean eliminado = false;
+
+                    // Recorremos todas las tiendas (productos/{tiendaId}/{productoId})
+                    for (DataSnapshot tiendaSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot productoSnapshot : tiendaSnapshot.getChildren()) {
+                            Producto producto = productoSnapshot.getValue(Producto.class);
+
+                            if (producto != null && id.equals(producto.getId())) {
+                                productoSnapshot.getRef().removeValueAsync();
+                                eliminado = true;
+                                System.out.println("✅ Producto eliminado: " + producto.getNombre());
+                                break;
+                            }
+                        }
+                        if (eliminado)
+                            break;
+                    }
+
+                    if (eliminado) {
+                        future.complete("Producto eliminado correctamente");
+                    } else {
+                        future.complete("❌ No se encontró el producto con ID: " + id);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    future.completeExceptionally(new RuntimeException("Error al eliminar: " + error.getMessage()));
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            future.completeExceptionally(new RuntimeException("Error al eliminar producto: " + e.getMessage()));
+        }
+
+        return future;
+    }
+
     @PostMapping("/crear/{usuarioId}")
     public CompletableFuture<String> crearProducto(@PathVariable String usuarioId, @RequestBody Producto producto) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -43,8 +139,7 @@ public class ProductoController {
 
         DatabaseReference ref = database.getReference("productos");
 
-
-        ref.limitToFirst(100).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.limitToFirst(6000).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 List<Producto> lista = new ArrayList<>();
@@ -55,11 +150,11 @@ public class ProductoController {
                         Producto p = productoSnapshot.getValue(Producto.class);
                         if (p != null) {
                             lista.add(p);
-                            if (lista.size() >= 100)
-                                break; 
+                            if (lista.size() >= 6000)
+                                break;
                         }
                     }
-                    if (lista.size() >= 100)
+                    if (lista.size() >= 6000)
                         break;
                 }
 
