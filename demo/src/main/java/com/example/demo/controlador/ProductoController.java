@@ -16,51 +16,55 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/productos")
 public class ProductoController {
 
-
+    // Depurar huerfanos
+    // http://localhost:8080/api/productos/depurar/huerfanos
     @DeleteMapping("/depurar/huerfanos")
-public CompletableFuture<List<String>> depurarHuerfanos(
-        @RequestParam(defaultValue = "false") boolean dryRun) {
+    public CompletableFuture<List<String>> depurarHuerfanos(
+            @RequestParam(defaultValue = "false") boolean dryRun) {
 
-    CompletableFuture<List<String>> future = new CompletableFuture<>();
-    List<String> eliminados = new ArrayList<>();
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        List<String> eliminados = new ArrayList<>();
 
-    try {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("productos");
+        try {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("productos");
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot tiendaSnap : snapshot.getChildren()) {
-                    for (DataSnapshot prodSnap : tiendaSnap.getChildren()) {
-                        // Criterio de "huérfano": si no tiene 'nombre' o 'marca'
-                        boolean sinNombre = !prodSnap.hasChild("nombre");
-                        boolean sinMarca  = !prodSnap.hasChild("marca");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot tiendaSnap : snapshot.getChildren()) {
+                        for (DataSnapshot prodSnap : tiendaSnap.getChildren()) {
+                            // Criterio de "huérfano": si no tiene 'nombre' o 'marca'
+                            boolean sinNombre = !prodSnap.hasChild("nombre");
+                            boolean sinMarca = !prodSnap.hasChild("marca");
 
-                        if (sinNombre || sinMarca) {
-                            String path = "productos/" + tiendaSnap.getKey() + "/" + prodSnap.getKey();
-                            eliminados.add(path);
-                            if (!dryRun) {
-                                prodSnap.getRef().removeValueAsync();
+                            if (sinNombre || sinMarca) {
+                                String path = "productos/" + tiendaSnap.getKey() + "/" + prodSnap.getKey();
+                                eliminados.add(path);
+                                if (!dryRun) {
+                                    prodSnap.getRef().removeValueAsync();
+                                }
                             }
                         }
                     }
+                    if (dryRun) {
+                        System.out.println("DryRun: se eliminarían -> " + eliminados);
+                    }
+                    future.complete(eliminados);
                 }
-                if (dryRun) {
-                    System.out.println("DryRun: se eliminarían -> " + eliminados);
-                }
-                future.complete(eliminados);
-            }
 
-            @Override public void onCancelled(DatabaseError error) {
-                future.completeExceptionally(new RuntimeException(error.getMessage()));
-            }
-        });
-    } catch (Exception e) {
-        future.completeExceptionally(e);
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    future.completeExceptionally(new RuntimeException(error.getMessage()));
+                }
+            });
+        } catch (Exception e) {
+            future.completeExceptionally(e);
+        }
+        return future;
     }
-    return future;
-}
 
-
+    // Eliminar producto
+    // http://localhost:8080/api/productos/eliminar/{id}
     @DeleteMapping("/eliminar/{id}")
     public CompletableFuture<String> eliminarProducto(@PathVariable String id) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -69,13 +73,11 @@ public CompletableFuture<List<String>> depurarHuerfanos(
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference ref = database.getReference("productos");
 
-            // ✅ Buscar y eliminar producto sin importar en qué tienda esté
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     boolean eliminado = false;
 
-                    // Recorremos todas las tiendas (productos/{tiendaId}/{productoId})
                     for (DataSnapshot tiendaSnapshot : snapshot.getChildren()) {
                         for (DataSnapshot productoSnapshot : tiendaSnapshot.getChildren()) {
                             Producto producto = productoSnapshot.getValue(Producto.class);
@@ -112,6 +114,8 @@ public CompletableFuture<List<String>> depurarHuerfanos(
         return future;
     }
 
+    // Crear producto
+    // http://localhost:8080/api/productos/crear
     @PostMapping("/crear/{usuarioId}")
     public CompletableFuture<String> crearProducto(@PathVariable String usuarioId, @RequestBody Producto producto) {
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -132,6 +136,8 @@ public CompletableFuture<List<String>> depurarHuerfanos(
         return future;
     }
 
+    // Listar productos
+    // http://localhost:8080/api/productos/listar
     @GetMapping("/listar")
     public CompletableFuture<List<Producto>> listarProductos() {
         CompletableFuture<List<Producto>> future = new CompletableFuture<>();
@@ -144,7 +150,6 @@ public CompletableFuture<List<String>> depurarHuerfanos(
             public void onDataChange(DataSnapshot snapshot) {
                 List<Producto> lista = new ArrayList<>();
 
-                // ✅ Si tu estructura es: productos/{tiendaId}/{productoId}
                 for (DataSnapshot tiendaSnapshot : snapshot.getChildren()) {
                     for (DataSnapshot productoSnapshot : tiendaSnapshot.getChildren()) {
                         Producto p = productoSnapshot.getValue(Producto.class);
@@ -172,6 +177,8 @@ public CompletableFuture<List<String>> depurarHuerfanos(
         return future;
     }
 
+    // Listar productos de un usuario
+    // http://localhost:8080/api/productos/listar/usuarioId
     @GetMapping("/listar/{usuarioId}")
     public CompletableFuture<List<Producto>> listarProductosUsuario(@PathVariable String usuarioId) {
         CompletableFuture<List<Producto>> future = new CompletableFuture<>();
@@ -227,6 +234,8 @@ public CompletableFuture<List<String>> depurarHuerfanos(
         return future;
     }
 
+    // Listar productos de una tienda
+    // http://localhost:8080/api/productos/listar/tienda/{tiendaId}
     @GetMapping("/listar/tienda/{tiendaId}")
     public CompletableFuture<List<Producto>> listarProductosTienda(@PathVariable String tiendaId) {
         CompletableFuture<List<Producto>> future = new CompletableFuture<>();

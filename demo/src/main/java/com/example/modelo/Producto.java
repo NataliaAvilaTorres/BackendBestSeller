@@ -8,27 +8,41 @@ public class Producto {
     private double precioHasta;
     private String urlImagen;
     private String usuarioId;
-    private String tiendaId;    
+    private String tiendaId;
 
-    public Producto() {}
+    // Constructor sin parámetros
+    public Producto() {
+    }
 
+    // Constructor con parámetros
     public Producto(String id, String nombre, Marca marca, double precio, double precioHasta,
-                    String urlImagen, String usuarioId, String tiendaId) {
+            String urlImagen, String usuarioId, String tiendaId) {
         this.id = id;
         this.nombre = nombre;
         this.marca = marca;
         this.precio = precio;
-        this.precioHasta = precioHasta; // ✅ asignar
+        this.precioHasta = precioHasta;
         this.urlImagen = urlImagen;
         this.usuarioId = usuarioId;
         this.tiendaId = tiendaId;
     }
 
-    public double getPrecioHasta() { return precioHasta; }
-    public void setPrecioHasta(double precioHasta) { this.precioHasta = precioHasta; }
+    // Getters y setters
+    public double getPrecioHasta() {
+        return precioHasta;
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public void setPrecioHasta(double precioHasta) {
+        this.precioHasta = precioHasta;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Marca getMarca() {
         return marca;
@@ -46,7 +60,6 @@ public class Producto {
         this.nombre = nombre;
     }
 
-
     public double getPrecio() {
         return precio;
     }
@@ -63,11 +76,22 @@ public class Producto {
         this.urlImagen = urlImagen;
     }
 
-    public String getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
+    public String getUsuarioId() {
+        return usuarioId;
+    }
 
-    public String getTiendaId() { return tiendaId; }
-    public void setTiendaId(String tiendaId) { this.tiendaId = tiendaId; }
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getTiendaId() {
+        return tiendaId;
+    }
+
+    public void setTiendaId(String tiendaId) {
+        this.tiendaId = tiendaId;
+    }
+
     @Override
     public String toString() {
         return "Producto{" +
@@ -77,5 +101,5 @@ public class Producto {
                 ", urlImagen='" + urlImagen + '\'' +
                 '}';
     }
-    
+
 }

@@ -1,20 +1,22 @@
 package com.example.modelo;
 
 public class Marca {
-    private String id;             // ID único de la marca
-    private String nombreMarca;    // Nombre de la marca
-    private String categoria;    
+    private String id;
+    private String nombreMarca;
+    private String categoria;
 
-    public Marca() {}
+    // Constructor sin parámetros
+    public Marca() {
+    }
 
-    // Constructor
+    // Constructor con parámetros
     public Marca(String id, String nombreMarca, String categoria) {
         this.id = id;
         this.nombreMarca = nombreMarca;
         this.categoria = categoria;
     }
 
-    // Getters y Setters
+    // Getters y setters
     public String getId() {
         return id;
     }

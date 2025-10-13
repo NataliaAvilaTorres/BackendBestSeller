@@ -40,6 +40,8 @@ public class UsuarioController {
         }
     }
 
+    //registrar usuario
+    //http://localhost:8080/api/usuarios/registrar
     @PostMapping("/registrar")
     public Respuesta registrarUsuario(@RequestBody Usuario usuario) {
         try {
@@ -61,6 +63,8 @@ public class UsuarioController {
         }
     }
 
+    //login
+    //http://localhost:8080/api/usuarios/login
     @PostMapping("/login")
     public CompletableFuture<Respuesta> login(@RequestBody Usuario usuario) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -102,6 +106,8 @@ public class UsuarioController {
         return future;
     }
 
+    //actualizar usuario
+    //http://localhost:8080/api/usuarios/actualizar/1
     @PutMapping("/actualizar/{id}")
     public Respuesta actualizarUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
         try {
@@ -118,6 +124,8 @@ public class UsuarioController {
         }
     }
 
+    //eliminar usuario
+    //http://localhost:8080/api/usuarios/eliminar/1
     @DeleteMapping("/eliminar/{id}")
     public Respuesta eliminarUsuario(@PathVariable String id) {
         try {

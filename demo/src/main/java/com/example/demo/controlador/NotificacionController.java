@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
 
+    // Listar todas las notificaciones
+    // localhost:8080/api/notificaciones/listar
     @GetMapping("/listar")
     public CompletableFuture<List<Notificacion>> listarNotificaciones() {
         CompletableFuture<List<Notificacion>> future = new CompletableFuture<>();

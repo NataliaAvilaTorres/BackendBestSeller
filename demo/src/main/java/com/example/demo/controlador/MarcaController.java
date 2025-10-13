@@ -12,11 +12,12 @@ import com.example.modelo.Marca;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
 @RestController
 @RequestMapping("/api/marcas")
 public class MarcaController {
 
+    // Listar todas las marcas
+    // localhost:8080/api/marcas/listar
     @GetMapping("/listar")
     public CompletableFuture<List<Marca>> listarMarcas() {
         CompletableFuture<List<Marca>> future = new CompletableFuture<>();

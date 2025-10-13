@@ -23,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 @RequestMapping("/api/ofertas")
 public class OfertaController {
 
+    // Crear oferta
+    // http://localhost:8080/api/ofertas/crear
     @PostMapping("/crear/{usuarioId}")
     public CompletableFuture<Respuesta> crearOferta(@PathVariable String usuarioId, @RequestBody Oferta oferta) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -40,12 +42,8 @@ public class OfertaController {
             String ofertaId = ofertaRef.push().getKey();
             oferta.setId(ofertaId);
             oferta.setUsuarioId(usuarioId);
-
-            // Mantener solo productoId en la oferta
-            // No se guarda el objeto Producto completo
             ofertaRef.child(ofertaId).setValueAsync(oferta);
 
-            // Crear notificación
             DatabaseReference notificacionesRef = database.getReference("notificaciones");
             String notificacionId = notificacionesRef.push().getKey();
             Notificacion notificacion = new Notificacion(
@@ -64,6 +62,8 @@ public class OfertaController {
         return future;
     }
 
+    // Toggle like
+    // http://localhost:8080/api/ofertas/1/like/usuarioId
     @PostMapping("/{id}/like/{usuarioId}")
     public CompletableFuture<Respuesta> toggleLike(
             @PathVariable String id,
@@ -121,6 +121,8 @@ public class OfertaController {
         return future;
     }
 
+    // Listar ofertas
+    // http://localhost:8080/api/ofertas/listar
     @GetMapping("/listar")
     public CompletableFuture<Iterable<Oferta>> listarOfertas() {
         CompletableFuture<Iterable<Oferta>> future = new CompletableFuture<>();
@@ -147,6 +149,8 @@ public class OfertaController {
         return future;
     }
 
+    // Listar notificaciones
+    // http://localhost:8080/api/notificaciones/listar
     @GetMapping("/notificaciones/listar")
     public CompletableFuture<List<Notificacion>> listarNotificaciones() {
         CompletableFuture<List<Notificacion>> future = new CompletableFuture<>();
@@ -172,6 +176,8 @@ public class OfertaController {
         return future;
     }
 
+    // Listar ofertas de un usuario
+    // http://localhost:8080/api/ofertas/listar/usuarioId
     @GetMapping("/listar/{usuarioId}")
     public CompletableFuture<List<Oferta>> listarOfertasUsuario(@PathVariable String usuarioId) {
         CompletableFuture<List<Oferta>> future = new CompletableFuture<>();
@@ -198,6 +204,8 @@ public class OfertaController {
         return future;
     }
 
+    // Actualizar oferta
+    // http://localhost:8080/api/ofertas/actualizar
     @PutMapping("/actualizar/{id}")
     public CompletableFuture<Respuesta> actualizarOferta(@PathVariable String id, @RequestBody Oferta oferta) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -213,6 +221,8 @@ public class OfertaController {
         return future;
     }
 
+    // Eliminar oferta
+    // http://localhost:8080/api/ofertas/eliminar
     @DeleteMapping("/eliminar/{id}")
     public CompletableFuture<Respuesta> eliminarOferta(@PathVariable String id) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -227,7 +237,7 @@ public class OfertaController {
         return future;
     }
 
-    // ---------- Clase de respuesta ----------
+    // Clase de respuesta
     public static class Respuesta {
         private String mensaje;
 

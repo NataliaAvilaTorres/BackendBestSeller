@@ -8,9 +8,12 @@ public class Usuario {
     private String urlImagen;
     private String contrasena;
 
-    public Usuario() {} 
+    // Constructor de la clase
+    public Usuario() {
+    }
 
-    public Usuario(String nombre, String correo, String ciudad,  String urlImagen, String contrasena, String id) {
+    // Constructor de la clase
+    public Usuario(String nombre, String correo, String ciudad, String urlImagen, String contrasena, String id) {
         this.nombre = nombre;
         this.correo = correo;
         this.ciudad = ciudad;
@@ -20,22 +23,51 @@ public class Usuario {
     }
 
     // Getters y Setters
+    public String getId() {
+        return id;
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getCiudad() { return ciudad; }
-    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-    public String getUrlImagen() { return urlImagen; }
-    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
+    public String getCorreo() {
+        return correo;
+    }
 
-    public String getContrasena() { return contrasena; }
-    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 }

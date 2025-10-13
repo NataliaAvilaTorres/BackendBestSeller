@@ -7,8 +7,11 @@ public class Notificacion {
     private Long timestamp;
     private String idOferta;
 
-    public Notificacion() {}
+    // Constructor por defecto
+    public Notificacion() {
+    }
 
+    // Constructor con parámetros
     public Notificacion(String id, String usuario, String mensaje, Long timestamp, String idOferta) {
         this.id = id;
         this.usuario = usuario;
@@ -17,21 +20,46 @@ public class Notificacion {
         this.idOferta = idOferta;
     }
 
-    // Getters y Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    // Getters y setters
+    public String getId() {
+        return id;
+    }
 
-    public String getUsuario() { return usuario; }
-    public void setUsuario(String usuario) { this.usuario = usuario; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getMensaje() { return mensaje; }
-    public void setMensaje(String mensaje) { this.mensaje = mensaje; }
+    public String getUsuario() {
+        return usuario;
+    }
 
-    public Long getTimestamp() { return timestamp; }
-    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
 
-    public String getIdOferta() { return idOferta; }
-    public void setIdOferta(String idOferta) { this.idOferta = idOferta; }
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getIdOferta() {
+        return idOferta;
+    }
+
+    public void setIdOferta(String idOferta) {
+        this.idOferta = idOferta;
+    }
 
     public void setTiempo(Long tiempo) {
         this.timestamp = tiempo;

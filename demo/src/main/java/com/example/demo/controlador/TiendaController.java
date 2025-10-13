@@ -15,6 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 @RequestMapping("/api/tiendas")
 public class TiendaController {
 
+    // Crear tienda
+    // http://localhost:8080/api/tiendas/crear
     @PostMapping("/crear")
     public CompletableFuture<Respuesta> crearTienda(@RequestBody Tienda tienda) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -36,6 +38,8 @@ public class TiendaController {
         return future;
     }
 
+    // Listar tiendas
+    // http://localhost:8080/api/tiendas/listar
     @GetMapping("/listar")
     public CompletableFuture<List<Tienda>> listarTiendas() {
         CompletableFuture<List<Tienda>> future = new CompletableFuture<>();
@@ -61,6 +65,8 @@ public class TiendaController {
         return future;
     }
 
+    // Obtener tienda
+    // http://localhost:8080/api/tiendas/obtener/1
     @GetMapping("/{id}")
     public CompletableFuture<Tienda> obtenerTienda(@PathVariable String id) {
         CompletableFuture<Tienda> future = new CompletableFuture<>();
@@ -82,6 +88,8 @@ public class TiendaController {
         return future;
     }
 
+    // Actualizar tienda
+    // http://localhost:8080/api/tiendas/actualizar/1
     @PutMapping("/actualizar/{id}")
     public CompletableFuture<Respuesta> actualizarTienda(@PathVariable String id, @RequestBody Tienda tienda) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -96,6 +104,8 @@ public class TiendaController {
         return future;
     }
 
+    // Eliminar tienda
+    // http://localhost:8080/api/tiendas/eliminar/1
     @DeleteMapping("/eliminar/{id}")
     public CompletableFuture<Respuesta> eliminarTienda(@PathVariable String id) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -109,6 +119,7 @@ public class TiendaController {
         return future;
     }
 
+    // Clase de respuesta
     public static class Respuesta {
         private String mensaje;
 
@@ -116,7 +127,12 @@ public class TiendaController {
             this.mensaje = mensaje;
         }
 
-        public String getMensaje() { return mensaje; }
-        public void setMensaje(String mensaje) { this.mensaje = mensaje; }
+        public String getMensaje() {
+            return mensaje;
+        }
+
+        public void setMensaje(String mensaje) {
+            this.mensaje = mensaje;
+        }
     }
 }

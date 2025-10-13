@@ -10,18 +10,20 @@ public class Oferta {
     private String tiendaId;
     private Long fechaOferta;
     private Long fechaFinal;
-    private int likes;            
-    private boolean likedByUser;   
-    private String usuarioId;      
+    private int likes;
+    private boolean likedByUser;
+    private String usuarioId;
     private String productoId;
     private Ubicacion ubicacion;
-
-    // Se crea el mapa de los usuarios que le han dado like
     private Map<String, Boolean> likedBy = new HashMap<>();
 
-    public Oferta() {}
+    // Constructor por defecto
+    public Oferta() {
+    }
 
-    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaId, Long fechaOferta, Long fechaFinal, int likes, boolean likedByUser, String usuarioId, String productoId , Ubicacion ubicacion) {
+    // Constructor con parámetros
+    public Oferta(String id, String nombreOferta, String descripcionOferta, String tiendaId, Long fechaOferta,
+            Long fechaFinal, int likes, boolean likedByUser, String usuarioId, String productoId, Ubicacion ubicacion) {
         this.id = id;
         this.nombreOferta = nombreOferta;
         this.descripcionOferta = descripcionOferta;
@@ -36,13 +38,19 @@ public class Oferta {
         this.ubicacion = ubicacion;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    // Getters y setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setTiendaId(String tiendaId) {
         this.tiendaId = tiendaId;
     }
-    
+
     public String getNombreOferta() {
         return nombreOferta;
     }
@@ -75,28 +83,55 @@ public class Oferta {
         this.fechaFinal = fechaFinal;
     }
 
-
-
-
     public String getTiendaId() {
         return tiendaId;
     }
 
-    public int getLikes() { return likes; }
-    public void setLikes(int likes) { this.likes = likes; }
+    public int getLikes() {
+        return likes;
+    }
 
-    public boolean isLikedByUser() { return likedByUser; }
-    public void setLikedByUser(boolean likedByUser) { this.likedByUser = likedByUser; }
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
 
-    public String getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(String usuarioId) { this.usuarioId = usuarioId; }
+    public boolean isLikedByUser() {
+        return likedByUser;
+    }
 
-    public String getProductoId() { return productoId; }
-    public void setProductoId(String productoId) { this.productoId = productoId; }
+    public void setLikedByUser(boolean likedByUser) {
+        this.likedByUser = likedByUser;
+    }
 
-    public Map<String, Boolean> getLikedBy() { return likedBy; }
-    public void setLikedBy(Map<String, Boolean> likedBy) { this.likedBy = likedBy; }
+    public String getUsuarioId() {
+        return usuarioId;
+    }
 
-    public Ubicacion getUbicacion() { return ubicacion; }
-    public void setUbicacion(Ubicacion ubicacion) { this.ubicacion = ubicacion; }
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public String getProductoId() {
+        return productoId;
+    }
+
+    public void setProductoId(String productoId) {
+        this.productoId = productoId;
+    }
+
+    public Map<String, Boolean> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(Map<String, Boolean> likedBy) {
+        this.likedBy = likedBy;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 }
