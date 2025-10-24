@@ -2,9 +2,18 @@ package com.example.demo.controlador;
 
 import com.example.modelo.Usuario;
 import com.google.api.core.ApiFuture;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +49,38 @@ public class UsuarioController {
         }
     }
 
-    //registrar usuario
-    //http://localhost:8080/api/usuarios/registrar
+    // Listar todos los usuarios
+    // GET -> http://localhost:8080/api/usuarios/listar
+    @GetMapping("/listar")
+    public CompletableFuture<List<Usuario>> listarUsuarios() {
+        CompletableFuture<List<Usuario>> future = new CompletableFuture<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("usuarios");
+
+        ref.addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(com.google.firebase.database.DataSnapshot snapshot) {
+                List<Usuario> listaUsuarios = new ArrayList<>();
+                if (snapshot.exists()) {
+                    for (com.google.firebase.database.DataSnapshot child : snapshot.getChildren()) {
+                        Usuario u = child.getValue(Usuario.class);
+                        listaUsuarios.add(u);
+                    }
+                }
+                future.complete(listaUsuarios); // devuelve lista (vacía si no hay)
+            }
+
+            @Override
+            public void onCancelled(com.google.firebase.database.DatabaseError error) {
+                future.completeExceptionally(new RuntimeException("Error Firebase: " + error.getMessage()));
+            }
+        });
+
+        return future;
+    }
+
+    // registrar usuario
+    // http://localhost:8080/api/usuarios/registrar
     @PostMapping("/registrar")
     public Respuesta registrarUsuario(@RequestBody Usuario usuario) {
         try {
@@ -63,8 +102,8 @@ public class UsuarioController {
         }
     }
 
-    //login
-    //http://localhost:8080/api/usuarios/login
+    // login
+    // http://localhost:8080/api/usuarios/login
     @PostMapping("/login")
     public CompletableFuture<Respuesta> login(@RequestBody Usuario usuario) {
         CompletableFuture<Respuesta> future = new CompletableFuture<>();
@@ -106,8 +145,8 @@ public class UsuarioController {
         return future;
     }
 
-    //actualizar usuario
-    //http://localhost:8080/api/usuarios/actualizar/1
+    // actualizar usuario
+    // http://localhost:8080/api/usuarios/actualizar/1
     @PutMapping("/actualizar/{id}")
     public Respuesta actualizarUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
         try {
@@ -124,8 +163,8 @@ public class UsuarioController {
         }
     }
 
-    //eliminar usuario
-    //http://localhost:8080/api/usuarios/eliminar/1
+    // eliminar usuario
+    // http://localhost:8080/api/usuarios/eliminar/1
     @DeleteMapping("/eliminar/{id}")
     public Respuesta eliminarUsuario(@PathVariable String id) {
         try {
