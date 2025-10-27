@@ -2,16 +2,9 @@ package com.example.demo.controlador;
 
 import com.example.modelo.Usuario;
 import com.google.api.core.ApiFuture;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

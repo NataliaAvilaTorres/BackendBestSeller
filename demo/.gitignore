@@ -38,3 +38,5 @@ build/
 src/main/resources/*firebase*.json
 serviceAccountKey.json
 best-seller-382e9-firebase-adminsdk-fbsvc-71fd085c87.json
+src/main/resources/best-seller-382e9-6c42a0df123c.json
+best-seller-382e9-6c42a0df123c.json
